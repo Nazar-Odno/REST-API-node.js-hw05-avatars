@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.static("public"));
 //мидлвара для публичной роздачи - если придет запрос, срзу ищи в этой папке
 
-app.use("/users", authRouter);
+app.use("/api/users", authRouter);
 app.use("/api/contacts", contactsRouter);
 // если прийдет любой запрос /api/contacts - ищи его в обьекте contactsRouter
 
