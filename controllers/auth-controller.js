@@ -121,6 +121,49 @@ const ChangeAvatar = async (req, res) => {
   res.status(200).json(result.avatarURL);
 };
 
+const { path: tempURL, filename } = req.file;
+
+  await resize(tempURL);
+  const resultURL = path.join(avatarsDir, filename);
+
+  await fs.rename(tempURL, resultURL);
+  const avatarURL = path.join("avatars", filename);
+
+  await User.findByIdAndUpdate(
+    _id,
+    { avatarURL, avatarImage: filename },
+    { new: true }
+  ).exec();
+
+  res.status(200).json({
+    avatarURL,
+  });
+
+const getAvatar = async (req, res) => {
+  console.log(req.user);
+  // res.end();
+  const user = await User.findById(req.user._id).exec();
+  if (user === null) {
+    return res.status(404).send({ message: "User not found" });
+  }
+
+  if (!user.avatarURL) {
+    return res.status(404).send({ message: "Avatar not found" });
+  }
+
+  res.sendFile(path.join(__dirname, "..", "public/", user.avatarURL));
+};
+
+module.exports = {
+  register: ctrlWrapper(register),
+  login: ctrlWrapper(login),
+  getCurrent: ctrlWrapper(getCurrent),
+  logout: ctrlWrapper(logout),
+  subscription: ctrlWrapper(subscription),
+  updateAvatar: ctrlWrapper(updateAvatar),
+  getAvatar: ctrlWrapper(getAvatar),
+};
+
 export default {
   signup: ctrlWrapper(signup),
   signin: ctrlWrapper(signin),
