@@ -106,6 +106,8 @@ const ChangeAvatar = async (req, res) => {
     image.write(newPath); // сохраняем измененное изображение
   });
 
+  await fs.unlink(oldPath);
+
   //создаем новый путь к перемещенному файлу
   const poster = path.join("avatars", filename);
   avatarURL = poster;
